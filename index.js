@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const {User} = require("./models/User");
+const config = require("./config/key");
 const app = express();
 
 //application/x-www-form-urlencoded
@@ -9,7 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //allpication/json
 app.use(bodyParser.json());
-mongoose.connect('mongodb+srv://root:1234@cluster0.cu0gf.mongodb.net/test?retryWrites=true&w=majority',{
+mongoose.connect(config.mongoURI,{
   useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify: true
 }).then(() => console.log('connect success'))
   .catch(err => console.log(err))
