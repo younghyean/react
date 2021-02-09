@@ -1,10 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+const config = require("./config/key");
+
 const {User} = require("./models/User");
 const {auth} = require("./middleware/auth");
-const config = require("./config/key");
-const cookieParser = require('cookie-parser');
 const app = express();
 
 //application/x-www-form-urlencoded
@@ -22,9 +24,11 @@ mongoose.connect(config.mongoURI,{
 const port  =3000;
 // respond with "hello world" when a GET request is made to the homepage
 //
+
 app.get('/', function(req, res) {
   res.send('hello world 안녕하세요');
 });
+
 
 //회원 가입 할때 필요한 정보들을 client에서 가져오면 db에 넣어준다.
 app.post('/api/users/register',(req, res) =>{  
@@ -85,6 +89,22 @@ app.get('/api/users/auth', auth ,(req,res)=>{
   });
 });
 
+
+
+//로그아웃
+app.get('/api/users/logout', auth ,(req, res)=>{
+  
+  User.findOneAndUpdate({_id : req.user._id},
+    { token : ""}
+    ,(err, user)=> {
+      if(err) return res.json({success : false, err});
+      return res.status(200).send({
+        success : true
+      });
+    });
+
+
+});
 
 
 app.listen(port, () => console.log(`example app listening on port ${port}!`));
