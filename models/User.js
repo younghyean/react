@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
 const saltRounds = 10;
 
 const userSchema = mongoose.Schema({
@@ -44,10 +45,43 @@ userSchema.pre('save',function(next){
                 next();
             });
         });
+    }else{
+        next();
     }
 
 })
 
+userSchema.methods.comparePassword = function(plainPassword, cb){
+    bcrypt.compare(plainPassword, this.password, function(err, isMatch){
+        if(err) return cb(err);
+        cb(null, isMatch);
+    });
+};
+
+ //토큰 생성
+userSchema.methods.generateToken=function(cb){
+    let user = this;
+    let toekn = jwt.sign( user._id.toHexString() , 'secretToken');
+    user.token = toekn;
+    user.save(function(err, user){
+        if(err) return cb(err);
+        cb(null, user);
+    });
+};
+
+//토큰 찾아서 확인
+userSchema.methods.findByToken = function(token, cb){
+    var user = this;
+    user._id + '' = token;
+    jwt.verify(token, 'secretToken', function(err, decoded){
+        
+        user.findOne({"_id" : decoded, "token": token}, function(err, user){
+            if(err) return cb(err);
+            cb(null, user);
+        });
+
+    });
+};
 
 const User = mongoose.model('User', userSchema);
 module.exports ={User};
