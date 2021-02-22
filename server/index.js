@@ -21,11 +21,14 @@ mongoose.connect(config.mongoURI,{
   useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify: true
 }).then(() => console.log('connect success'))
   .catch(err => console.log(err))
-const port  =3000;
+
 // respond with "hello world" when a GET request is made to the homepage
 //
 
 app.get('/', function(req, res) {
+  res.send('hello world 안녕하세요');
+});
+app.get('/api/hello', function(req, res) {
   res.send('hello world 안녕하세요');
 });
 
@@ -106,5 +109,5 @@ app.get('/api/users/logout', auth ,(req, res)=>{
 
 });
 
-
+const port  =5000;
 app.listen(port, () => console.log(`example app listening on port ${port}!`));
