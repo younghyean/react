@@ -29,7 +29,7 @@ function LoginPage(props) {
                    props.history.push('/');
                 }
                 else{
-                    alert('Error')
+                    alert('아이디 또는 비밀번호가 틀렸습니다.');
                 }
             })
       
